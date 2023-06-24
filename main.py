@@ -1,9 +1,33 @@
 import speech_recognition as sr
 import win32com.client
+import os
 import webbrowser
 import openai
 import datetime
+import random
 speaker = win32com.client.Dispatch("SAPI.SpVoice")
+openai.api_key = "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"
+
+def ai(prompt):
+    text = f"Open AI response for Prompt: {prompt} \n ***************** \n\n"
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt="Write an application for artificial intelligence internship",
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    #todo : wrap this inside a try catch
+    # print(response["choices"][0]["text"])
+    text += response["choices"][0]["text"]
+    if not os.path.exists("Openai"):
+        os.mkdir("Openai")
+    with open(f"Openai/prompt- {random.randint(1, 31231324242)}", "w") as f:
+        f.write(text)
+def say(text):
+    os.system(f" say {text}")
 
 def takeCommand():
     r = sr.Recognizer()
@@ -32,3 +56,5 @@ if __name__ == '__main__':
             if "time" in query:
                 strfTime = datetime.datetime.now().strftime("%H:%M:%S")
                 speaker.Speak(f"Sir the time is {strfTime}")
+            if "using artificial intelligence".lower() in query.lower():
+                ai(prompt=query)
